@@ -2,8 +2,10 @@ const express = require('express')
 const router = express.Router()
 const pool = require('../db/connection')
 
+const verifyToken = require('../middleware/auth')
+
 // GET todas las tareas de un board
-router.get('/board/:boardId', async (req, res) => {
+router.get('/board/:boardId', verifyToken, async (req, res) => {
   const { boardId } = req.params
   try {
     const result = await pool.query(
@@ -17,7 +19,7 @@ router.get('/board/:boardId', async (req, res) => {
 })
 
 // POST crear tarea
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
   const { titulo, descripcion, board_id, user_id } = req.body
   try {
     const result = await pool.query(
@@ -31,7 +33,7 @@ router.post('/', async (req, res) => {
 })
 
 // PUT actualizar tarea
-router.put('/:id', async (req, res) => {
+router.put('/:id', verifyToken, async (req, res) => {
   const { id } = req.params
   const { titulo, descripcion, estado } = req.body
   try {
@@ -46,7 +48,7 @@ router.put('/:id', async (req, res) => {
 })
 
 // DELETE borrar tarea
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verifyToken, async (req, res) => {
   const { id } = req.params
   try {
     await pool.query('DELETE FROM tasks WHERE id=$1', [id])

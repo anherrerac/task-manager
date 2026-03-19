@@ -2,8 +2,10 @@ const express = require('express')
 const router = express.Router()
 const pool = require('../db/connection')
 
+const verifyToken = require('../middleware/auth')
+
 // GET todos los boards de un usuario
-router.get('/user/:userId', async (req, res) => {
+router.get('/user/:userId', verifyToken, async (req, res) => {
   const { userId } = req.params
   try {
     const result = await pool.query(
@@ -17,7 +19,7 @@ router.get('/user/:userId', async (req, res) => {
 })
 
 // POST crear board
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
   const { nombre, descripcion, user_id } = req.body
   try {
     const result = await pool.query(
@@ -31,7 +33,7 @@ router.post('/', async (req, res) => {
 })
 
 // PUT actualizar board
-router.put('/:id', async (req, res) => {
+router.put('/:id', verifyToken, async (req, res) => {
   const { id } = req.params
   const { nombre, descripcion } = req.body
   try {
@@ -46,7 +48,7 @@ router.put('/:id', async (req, res) => {
 })
 
 // DELETE borrar board
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verifyToken, async (req, res) => {
   const { id } = req.params
   try {
     await pool.query('DELETE FROM boards WHERE id=$1', [id])

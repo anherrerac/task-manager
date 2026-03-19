@@ -6,6 +6,7 @@ const pool = require('./db/connection')
 const tasksRoutes = require('./routes/tasks')
 const boardsRoutes = require('./routes/boards')
 const usersRoutes = require('./routes/users')
+const authRoutes = require('./routes/auth')
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -17,6 +18,8 @@ app.use(express.json())
 app.use('/api/tasks', tasksRoutes)
 app.use('/api/boards', boardsRoutes)
 app.use('/api/users', usersRoutes)
+app.use('/api/auth', authRoutes)
+
 
 app.get('/', (req, res) => {
   res.json({ message: 'Servidor funcionando' })
