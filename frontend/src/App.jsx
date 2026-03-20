@@ -9,6 +9,11 @@ function PrivateRoute({ children }) {
   return token ? children : <Navigate to="/login" />
 }
 
+function DefaultRoute() {
+  const { token } = useAuth()
+  return token ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
+}
+
 function App() {
   return (
     <AuthProvider>
@@ -21,7 +26,7 @@ function App() {
               <Dashboard />
             </PrivateRoute>
           } />
-          <Route path="/" element={<Navigate to="/login" />} />
+          <Route path="/" element={<DefaultRoute />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
