@@ -75,6 +75,33 @@ function Board({ boardId }) {
     }
   }
 
+  const deleteTask = async (taskId) => {
+  setTasks(prev => prev.filter(t => t.id !== taskId))
+  try {
+    await api.delete(`/tasks/${taskId}`)
+  } catch (err) {
+    console.error('Error eliminando tarea:', err)
+    fetchTasks()
+    }
+  }
+
+  const updateTask = async (taskId, updates) => {
+  setTasks(prev => prev.map(t =>
+    t.id === taskId ? { ...t, ...updates } : t
+  ))
+  try {
+    const task = tasks.find(t => t.id === taskId)
+    await api.put(`/tasks/${taskId}`, {
+      titulo: updates.titulo || task.titulo,
+      descripcion: updates.descripcion || task.descripcion,
+      estado: task.estado
+    })
+  } catch (err) {
+    console.error('Error actualizando tarea:', err)
+    fetchTasks()
+    }
+  }
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -98,9 +125,9 @@ function Board({ boardId }) {
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >
-          <Column id="todo" title="Por hacer" tasks={getTasksByStatus('todo')} />
-          <Column id="in_progress" title="En progreso" tasks={getTasksByStatus('in_progress')} />
-          <Column id="done" title="Hecho" tasks={getTasksByStatus('done')} />
+          <Column id="todo" title="Por hacer" tasks={getTasksByStatus('todo')} onDelete={deleteTask} onUpdate={updateTask} />
+          <Column id="in_progress" title="En progreso" tasks={getTasksByStatus('in_progress')} onDelete={deleteTask} onUpdate={updateTask} />
+          <Column id="done" title="Hecho" tasks={getTasksByStatus('done')} onDelete={deleteTask} onUpdate={updateTask} />
           <DragOverlay>
             {activeTask && (
               <div className="bg-gray-700 border border-blue-500 p-3 rounded-lg shadow-xl opacity-95 cursor-grabbing">
