@@ -40,6 +40,18 @@ function Dashboard() {
     }
   }
 
+  const deleteBoard = async (id) => {
+  if (!window.confirm('¿Eliminar este board y todas sus tareas?')) return
+  try {
+    await api.delete(`/boards/${id}`)
+    const remaining = boards.filter(b => b.id !== id)
+    setBoards(remaining)
+    setSelectedBoard(remaining.length > 0 ? remaining[0].id : null)
+  } catch (err) {
+    console.error('Error eliminando board:', err)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <nav className="bg-gray-800 px-6 py-4 flex justify-between items-center border-b border-gray-700">
@@ -57,17 +69,23 @@ function Dashboard() {
 
       <div className="px-6 py-4 flex items-center gap-3 border-b border-gray-700 bg-gray-800">
         {boards.map(board => (
-          <button
-            key={board.id}
-            onClick={() => setSelectedBoard(board.id)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              selectedBoard === board.id
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-            }`}
-          >
-            {board.nombre}
-          </button>
+            <div
+                key={board.id}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedBoard === board.id
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    }`}
+            >
+                <span onClick={() => setSelectedBoard(board.id)} className="cursor-pointer">
+                    {board.nombre}
+                </span>
+                <button
+                    onClick={() => deleteBoard(board.id)}
+                    className="hover:text-red-400 transition-colors text-xs opacity-60 hover:opacity-100"
+                >
+                    ✕
+                </button>
+            </div>
         ))}
         <button
           onClick={createBoard}

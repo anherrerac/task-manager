@@ -61,17 +61,19 @@ function Board({ boardId }) {
     }
   }
 
-  const addTask = async (titulo) => {
-    try {
-      const response = await api.post('/tasks', {
-        titulo,
-        descripcion: '',
-        board_id: boardId,
-        user_id: user.id
-      })
-      setTasks(prev => [...prev, response.data])
-    } catch (err) {
-      console.error('Error creando tarea:', err)
+  const addTask = async () => {
+  const titulo = window.prompt('Nombre de la tarea:')
+  if (!titulo) return
+  try {
+    const response = await api.post('/tasks', {
+      titulo,
+      descripcion: '',
+      board_id: boardId,
+      user_id: user.id
+    })
+    setTasks(prev => [...prev, response.data])
+  } catch (err) {
+    console.error('Error creando tarea:', err)
     }
   }
 
@@ -113,7 +115,7 @@ function Board({ boardId }) {
   return (
     <div>
       <button
-        onClick={() => addTask('Nueva tarea')}
+        onClick={addTask}
         className="mb-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
       >
         + Agregar tarea

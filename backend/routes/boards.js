@@ -48,9 +48,10 @@ router.put('/:id', verifyToken, async (req, res) => {
 })
 
 // DELETE borrar board
-router.delete('/:id', verifyToken, async (req, res) => {
+router.delete('/:id', async (req, res) => {
   const { id } = req.params
   try {
+    await pool.query('DELETE FROM tasks WHERE board_id=$1', [id])
     await pool.query('DELETE FROM boards WHERE id=$1', [id])
     res.json({ message: 'Board eliminado' })
   } catch (err) {
