@@ -25,42 +25,64 @@ function Dashboard() {
   }
 
   const createBoard = async () => {
-  const nombre = window.prompt('Nombre del board:')
-  if (!nombre) return
-  try {
-    const response = await api.post('/boards', {
-      nombre,
-      descripcion: '',
-      user_id: user.id
-    })
-    setBoards(prev => [...prev, response.data])
-    setSelectedBoard(response.data.id)
-  } catch (err) {
-    console.error('Error creando board:', err)
+    const nombre = window.prompt('Nombre del board:')
+    if (!nombre) return
+    try {
+      const response = await api.post('/boards', {
+        nombre,
+        descripcion: '',
+        user_id: user.id
+      })
+      setBoards(prev => [...prev, response.data])
+      setSelectedBoard(response.data.id)
+    } catch (err) {
+      console.error('Error creando board:', err)
+    }
   }
-}
 
   return (
-    <div style={{ padding: '24px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
-        <h2>Bienvenido, {user?.nombre}</h2>
-        <button onClick={logout}>Cerrar sesión</button>
-      </div>
+    <div className="min-h-screen bg-gray-900 text-white">
+      <nav className="bg-gray-800 px-6 py-4 flex justify-between items-center border-b border-gray-700">
+        <h1 className="text-xl font-bold text-blue-400">Task Manager</h1>
+        <div className="flex items-center gap-4">
+          <span className="text-gray-400 text-sm">Hola, {user?.nombre}</span>
+          <button
+            onClick={logout}
+            className="bg-gray-700 hover:bg-gray-600 text-sm px-4 py-2 rounded-lg transition-colors"
+          >
+            Cerrar sesión
+          </button>
+        </div>
+      </nav>
 
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
+      <div className="px-6 py-4 flex items-center gap-3 border-b border-gray-700 bg-gray-800">
         {boards.map(board => (
           <button
             key={board.id}
             onClick={() => setSelectedBoard(board.id)}
-            style={{ fontWeight: selectedBoard === board.id ? 'bold' : 'normal' }}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              selectedBoard === board.id
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+            }`}
           >
             {board.nombre}
           </button>
         ))}
-        <button onClick={createBoard}>+ Nuevo board</button>
+        <button
+          onClick={createBoard}
+          className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors border border-dashed border-gray-500"
+        >
+          + Nuevo board
+        </button>
       </div>
 
-      {selectedBoard && <Board boardId={selectedBoard} />}
+      <div className="p-6">
+        {selectedBoard
+          ? <Board boardId={selectedBoard} />
+          : <p className="text-gray-400 text-center mt-12">Crea un board para comenzar</p>
+        }
+      </div>
     </div>
   )
 }

@@ -5,26 +5,16 @@ import TaskCard from './TaskCard'
 function Column({ id, title, tasks }) {
   const { setNodeRef } = useDroppable({ id })
 
-  const columnStyle = {
-    backgroundColor: '#f0f0f0',
-    borderRadius: '8px',
-    padding: '16px',
-    width: '300px',
-    minHeight: '500px'
-  }
-
-  const titleStyle = {
-    margin: '0 0 16px 0',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    color: '#333'
-  }
-
   return (
-    <div style={columnStyle}>
-      <h3 style={titleStyle}>{title}</h3>
+    <div className="bg-gray-800 rounded-xl p-4 w-72 min-h-96 flex flex-col">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="font-semibold text-gray-200">{title}</h3>
+        <span className="bg-gray-700 text-gray-400 text-xs px-2 py-1 rounded-full">
+          {tasks.length}
+        </span>
+      </div>
       <SortableContext items={tasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
-        <div ref={setNodeRef}>
+        <div ref={setNodeRef} className="flex flex-col gap-2 flex-1">
           {tasks.map(task => (
             <TaskCard key={task.id} task={task} />
           ))}
