@@ -2,15 +2,19 @@
 
 A full-stack task management application inspired by Jira, built with React, Node.js, Express and PostgreSQL.
 
+🔗 **Live Demo**: [taskmanager-frontend-two-rho.vercel.app](https://taskmanager-frontend-two-rho.vercel.app)
+
 ## 🚀 Features
 
 - JWT Authentication (register, login, logout)
 - Create and manage multiple Kanban boards
-- Create, edit and delete tasks
+- Create, edit and delete tasks with title and description
 - Drag and drop tasks between columns (To Do, In Progress, Done)
+- Task detail modal for editing
 - Persistent data with PostgreSQL
 - Secure password hashing with bcrypt
-- Protected routes on both frontend and backend
+- Protected routes on frontend and backend
+- Responsive dark mode UI
 
 ## 🛠️ Tech Stack
 
@@ -20,6 +24,7 @@ A full-stack task management application inspired by Jira, built with React, Nod
 - React Router DOM
 - Axios
 - dnd-kit (drag and drop)
+- Context API (global state)
 
 **Backend**
 - Node.js + Express
@@ -28,9 +33,14 @@ A full-stack task management application inspired by Jira, built with React, Nod
 - PostgreSQL
 - pg (node-postgres)
 
+**DevOps**
+- Git + GitHub
+- Vercel (frontend deploy)
+- Render (backend + database deploy)
+
 ## 🏗️ Architecture
 
-This project follows a 3-tier architecture with a REST API:
+3-tier architecture with REST API:
 ```
 React (Frontend) → Node.js + Express (API REST) → PostgreSQL (Database)
 ```
@@ -38,16 +48,16 @@ React (Frontend) → Node.js + Express (API REST) → PostgreSQL (Database)
 ## 📁 Project Structure
 ```
 task-manager/
-  frontend/         # React application
+  frontend/
     src/
-      components/   # Reusable components (Board, Column, TaskCard)
+      components/   # Board, Column, TaskCard, TaskModal
       pages/        # Login, Register, Dashboard
       services/     # Axios API client
-      context/      # Auth context (JWT management)
-  backend/          # Node.js + Express API
+      context/      # Auth context (JWT + localStorage)
+  backend/
     routes/         # auth, users, boards, tasks
     middleware/     # JWT verification
-    db/             # PostgreSQL connection
+    db/             # PostgreSQL connection pool
 ```
 
 ## ⚙️ Local Setup
@@ -62,7 +72,7 @@ cd backend
 npm install
 ```
 
-Create a `.env` file in `/backend`:
+Create `.env` in `/backend`:
 ```
 PORT=3000
 DB_HOST=localhost
@@ -73,7 +83,7 @@ DB_PASSWORD=yourpassword
 JWT_SECRET=yourjwtsecret
 ```
 
-Create the database and tables:
+Create database and tables:
 ```sql
 CREATE DATABASE taskmanager;
 
@@ -105,8 +115,6 @@ CREATE TABLE tasks (
   updated_at TIMESTAMP DEFAULT NOW()
 );
 ```
-
-Run the backend:
 ```bash
 npm run dev
 ```
@@ -128,7 +136,7 @@ Open `http://localhost:5173`
 | POST | /api/users | Register | No |
 | GET | /api/boards/user/:id | Get user boards | Yes |
 | POST | /api/boards | Create board | Yes |
-| DELETE | /api/boards/:id | Delete board | Yes |
+| DELETE | /api/boards/:id | Delete board + tasks | Yes |
 | GET | /api/tasks/board/:id | Get board tasks | Yes |
 | POST | /api/tasks | Create task | Yes |
 | PUT | /api/tasks/:id | Update task | Yes |
