@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react'
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragOverlay } from '@dnd-kit/core'
 import Column from './Column'
 import TaskCard from './TaskCard'
+import CreateTaskModal from './CreateTaskModal'
 import { useAuth } from '../context/AuthContext'
 import api from '../services/api'
 
 function Board({ boardId }) {
   const [tasks, setTasks] = useState([])
   const [activeTask, setActiveTask] = useState(null)
+  const [showCreateModal, setShowCreateModal] = useState(false)
   const { user } = useAuth()
 
   useEffect(() => {
@@ -61,66 +63,64 @@ function Board({ boardId }) {
     }
   }
 
-  const addTask = async () => {
-  const titulo = window.prompt('Nombre de la tarea:')
-  if (!titulo) return
-  try {
-    const response = await api.post('/tasks', {
-      titulo,
-      descripcion: '',
-      board_id: boardId,
-      user_id: user.id
-    })
-    setTasks(prev => [...prev, response.data])
-  } catch (err) {
-    console.error('Error creando tarea:', err)
+  const handleCreateTask = async ({ titulo, descripcion, estado }) => {
+    try {
+      const response = await api.post('/tasks', {
+        titulo,
+        descripcion,
+        estado,
+        board_id: boardId,
+        user_id: user.id
+      })
+      setTasks(prev => [...prev, response.data])
+    } catch (err) {
+      console.error('Error creando tarea:', err)
     }
   }
 
   const deleteTask = async (taskId) => {
-  setTasks(prev => prev.filter(t => t.id !== taskId))
-  try {
-    await api.delete(`/tasks/${taskId}`)
-  } catch (err) {
-    console.error('Error eliminando tarea:', err)
-    fetchTasks()
+    setTasks(prev => prev.filter(t => t.id !== taskId))
+    try {
+      await api.delete(`/tasks/${taskId}`)
+    } catch (err) {
+      console.error('Error eliminando tarea:', err)
+      fetchTasks()
     }
   }
 
   const updateTask = async (taskId, updates) => {
-  setTasks(prev => prev.map(t =>
-    t.id === taskId ? { ...t, ...updates } : t
-  ))
-  try {
-    const task = tasks.find(t => t.id === taskId)
-    await api.put(`/tasks/${taskId}`, {
-      titulo: updates.titulo || task.titulo,
-      descripcion: updates.descripcion || task.descripcion,
-      estado: task.estado
-    })
-  } catch (err) {
-    console.error('Error actualizando tarea:', err)
-    fetchTasks()
+    setTasks(prev => prev.map(t =>
+      t.id === taskId ? { ...t, ...updates } : t
+    ))
+    try {
+      const task = tasks.find(t => t.id === taskId)
+      await api.put(`/tasks/${taskId}`, {
+        titulo: updates.titulo || task.titulo,
+        descripcion: updates.descripcion !== undefined ? updates.descripcion : task.descripcion,
+        estado: updates.estado || task.estado
+      })
+    } catch (err) {
+      console.error('Error actualizando tarea:', err)
+      fetchTasks()
     }
   }
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8
-      }
+      activationConstraint: { distance: 8 }
     })
   )
 
   return (
     <div>
       <button
-        onClick={addTask}
+        onClick={() => setShowCreateModal(true)}
         className="mb-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
       >
         + Agregar tarea
       </button>
-      <div className="flex gap-4">
+
+      <div className="flex gap-4 w-full">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
@@ -142,6 +142,13 @@ function Board({ boardId }) {
           </DragOverlay>
         </DndContext>
       </div>
+
+      {showCreateModal && (
+        <CreateTaskModal
+          onClose={() => setShowCreateModal(false)}
+          onCreate={handleCreateTask}
+        />
+      )}
     </div>
   )
 }

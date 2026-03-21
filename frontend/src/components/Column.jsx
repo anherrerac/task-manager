@@ -6,7 +6,7 @@ function Column({ id, title, tasks, onDelete, onUpdate }) {
   const { setNodeRef } = useDroppable({ id })
 
   return (
-    <div className="bg-gray-800 rounded-xl p-4 w-72 min-h-96 flex flex-col">
+    <div className="bg-gray-800 rounded-xl p-4 flex-1 min-h-96 flex flex-col">
       <div className="flex justify-between items-center mb-4">
         <h3 className="font-semibold text-gray-200">{title}</h3>
         <span className="bg-gray-700 text-gray-400 text-xs px-2 py-1 rounded-full">

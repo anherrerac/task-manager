@@ -19,12 +19,12 @@ router.get('/board/:boardId', verifyToken, async (req, res) => {
 })
 
 // POST crear tarea
-router.post('/', verifyToken, async (req, res) => {
-  const { titulo, descripcion, board_id, user_id } = req.body
+router.post('/', async (req, res) => {
+  const { titulo, descripcion, board_id, user_id, estado } = req.body
   try {
     const result = await pool.query(
-      'INSERT INTO tasks (titulo, descripcion, board_id, user_id) VALUES ($1, $2, $3, $4) RETURNING *',
-      [titulo, descripcion, board_id, user_id]
+      'INSERT INTO tasks (titulo, descripcion, board_id, user_id, estado) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [titulo, descripcion, board_id, user_id, estado || 'todo']
     )
     res.status(201).json(result.rows[0])
   } catch (err) {
