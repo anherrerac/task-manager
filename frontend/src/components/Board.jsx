@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragOverlay } from '@dnd-kit/core'
+import { DndContext, closestCorners, PointerSensor, useSensor, useSensors, DragOverlay } from '@dnd-kit/core'
 import Column from './Column'
 import TaskCard from './TaskCard'
 import CreateTaskModal from './CreateTaskModal'
@@ -40,9 +40,13 @@ function Board({ boardId }) {
     if (!over) return
 
     const validStatuses = ['todo', 'in_progress', 'done']
-    const newStatus = over.id
+    let newStatus = over.id
 
-    if (!validStatuses.includes(newStatus)) return
+    if (!validStatuses.includes(newStatus)) {
+      const overTask = tasks.find(t => t.id === over.id)
+      if (!overTask) return
+      newStatus = overTask.estado
+    }
 
     const task = tasks.find(t => t.id === active.id)
     if (!task || task.estado === newStatus) return
@@ -123,9 +127,10 @@ function Board({ boardId }) {
       <div className="flex gap-4 w-full">
         <DndContext
           sensors={sensors}
-          collisionDetection={closestCenter}
+          collisionDetection={closestCorners}
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
+          autoScroll={true}
         >
           <Column id="todo" title="Por hacer" tasks={getTasksByStatus('todo')} onDelete={deleteTask} onUpdate={updateTask} />
           <Column id="in_progress" title="En progreso" tasks={getTasksByStatus('in_progress')} onDelete={deleteTask} onUpdate={updateTask} />

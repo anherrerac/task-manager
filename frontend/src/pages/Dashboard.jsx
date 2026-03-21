@@ -108,7 +108,7 @@ function Dashboard() {
         </button>
       </div>
 
-      <div className="p-6">
+      <div className="p-6 overflow-hidden">
         {selectedBoard
           ? <Board boardId={selectedBoard} />
           : <p className="text-gray-400 text-center mt-12">Crea un board para comenzar</p>
