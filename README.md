@@ -2,8 +2,6 @@
 
 A full-stack task management application inspired by Jira, built with React, Node.js, Express and PostgreSQL.
 
-🔗 **Live Demo**: [taskmanager-frontend-two-rho.vercel.app](https://taskmanager-frontend-two-rho.vercel.app)
-
 ## 🚀 Features
 
 - JWT Authentication (register, login, logout)
